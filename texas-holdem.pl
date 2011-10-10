@@ -40,6 +40,19 @@ sub print_cards {
     print "\n";
 }
 
+sub shuffle {
+    my ($deck) = @_;
+    my $num_cards = scalar @$deck;
+    for (my $i= 0; $i < $num_cards; $i++) {
+        my $swap = int(rand($num_cards - $i)) + $i;
+        my $card_a = @$deck[$i];
+        my $card_b = @$deck[$swap];
+        @$deck[$i] = $card_b;
+        @$deck[$swap] = $card_a;
+    }
+}
+
+
 my @deck;
 
 foreach my $suit (qw{ s h c d }) { # spades hearts clubs diamonds }
@@ -51,4 +64,7 @@ foreach my $suit (qw{ s h c d }) { # spades hearts clubs diamonds }
 
 print "initializing deck:\n";
 print_cards(@deck);
-
+print "\n";
+shuffle(\@deck);
+print "shuffled deck:\n";
+print_cards(@deck);
