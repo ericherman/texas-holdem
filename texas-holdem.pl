@@ -218,12 +218,12 @@ foreach my $suit (qw{ s h c d }) { # spades hearts clubs diamonds }
     }
 }
 
-print "initializing deck:\n";
-print display_cards(@deck), "\n";
-print "\n";
-shuffle(\@deck);
-print "shuffled deck:\n";
-print display_cards(@deck), "\n";
+# print "initializing deck:\n";
+# print display_cards(@deck), "\n";
+# print "\n";
+# shuffle(\@deck);
+# print "shuffled deck:\n";
+# print display_cards(@deck), "\n";
 
 my $players = 5;
 
