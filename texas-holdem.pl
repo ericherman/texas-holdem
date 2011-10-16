@@ -21,23 +21,24 @@ sub rank_char {
     }
 }
 
-sub print_cards {
+sub display_cards {
     my @cards = @_;
     my $i = 0;
+    my $str = '';
     foreach my $card (@cards) {
         if ($i > 0) {
-            if (($i % 5) == 0) {
-                print "\n";
+            if (($i % 7) == 0) {
+                $str .= "\n";
             } else {
-                print " ";
+                $str .= " ";
             }
         }
         $i++;
         my $suit = $card->{suit};
-        my $rank = rank_char($card->{rank});
-        print sprintf("%2s%1s", $rank, $suit);
+        my $rank_char = rank_char($card->{rank});
+        $str = sprintf("%s%2s%1s", $str, $rank_char, $suit);
     }
-    print "\n";
+    return $str;
 }
 
 sub shuffle {
@@ -63,8 +64,8 @@ foreach my $suit (qw{ s h c d }) { # spades hearts clubs diamonds }
 }
 
 print "initializing deck:\n";
-print_cards(@deck);
+print display_cards(@deck), "\n";
 print "\n";
 shuffle(\@deck);
 print "shuffled deck:\n";
-print_cards(@deck);
+print display_cards(@deck), "\n";
