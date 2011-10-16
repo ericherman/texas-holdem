@@ -57,7 +57,7 @@ sub straight {
     my $num_cards = scalar @$cards;
     my $end = $num_cards - 5 + 1;
 
-    # straight flush
+    # straight
     for (my $start= 0; $start < $end; $start++) {
         my $ca = $cards->[$start + 0];
         my $cb = $cards->[$start + 1];
@@ -72,6 +72,35 @@ sub straight {
             my @hand = ($ca, $cb, $cc, $cd, $ce);
             my $best = {
                 name  => 'straight',
+                cards => \@hand,
+            };
+            return $best;
+        }
+    }
+    return undef;
+}
+
+sub flush {
+    my ($cards) = @_;
+    $cards = order_cards($cards);
+    my $num_cards = scalar @$cards;
+    my $end = $num_cards - 5 + 1;
+
+    # flush
+    for (my $start= 0; $start < $end; $start++) {
+        my $ca = $cards->[$start + 0];
+        my $cb = $cards->[$start + 1];
+        my $cc = $cards->[$start + 2];
+        my $cd = $cards->[$start + 3];
+        my $ce = $cards->[$start + 4];
+
+        if (($ca->{suit} eq $cb->{suit})
+         and ($ca->{suit} eq $cc->{suit})
+         and ($ca->{suit} eq $cd->{suit})
+         and ($ca->{suit} eq $ce->{suit})) {
+            my @hand = ($ca, $cb, $cc, $cd, $ce);
+            my $best = {
+                name  => 'flush',
                 cards => \@hand,
             };
             return $best;
@@ -163,15 +192,16 @@ sub best_hand {
     #full house
     #TODO FULL HOUSE
 
-    #strait
-    $best = n_of_a_kind(2, $cards);
+    #straight
+    $best = straight($cards);
     return $best if $best;
 
     #flush
-    #TODO FLUSH
+    $best = flush($cards);
+    return $best if $best;
 
     #three of a kind
-    $best = n_of_a_kind(2, $cards);
+    $best = n_of_a_kind(3, $cards);
     return $best if $best;
 
     #two pair
