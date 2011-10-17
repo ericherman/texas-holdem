@@ -7,15 +7,48 @@ sub new {
     my $class = shift;
     my ($rank, $suit) = @_;
     my $self = {};
-    if ($rank < 1 or $rank > 14) {
-        die "bad rank $rank";
+    bless $self, $class;
+
+    $self->_set_rank($rank);
+    $self->_set_suit($suit);
+
+    return $self;
+}
+
+sub _set_rank {
+    my ($self, $orig_rank) = @_;
+    my $rank = lc($orig_rank);
+    if (($rank eq 'a') or ($rank eq 'ace')) {
+        $rank = 14;
+    }
+    elsif (($rank eq 'k') or ($rank eq 'king')) {
+        $rank = 13;
+    }
+    elsif (($rank eq 'q') or ($rank eq 'queen')) {
+        $rank = 12;
+    }
+    elsif (($rank eq 'j') or ($rank eq 'jack')) {
+        $rank = 11;
+    }
+    elsif (($rank eq 't') or ($rank eq 'ten')) {
+        $rank = 10;
+    }
+    else {
+        $rank = $orig_rank;
     }
     if ($rank == 1) {
         $rank = 14; #Ace is rank 14 for most stuff
     }
+    if (not ($rank >= 2 and $rank <= 14)) {
+        die "bad rank $orig_rank";
+    }
     $self->{_rank} = $rank;
+}
 
-    $suit = lc($suit);
+sub _set_suit {
+    my ($self, $orig_suit) = @_;
+
+    my $suit = lc($orig_suit);
     if (($suit eq 's') or ($suit eq 'spades') or ($suit eq 'spade')) {
         $self->{_suit} = 's';
     }
@@ -29,11 +62,8 @@ sub new {
         $self->{_suit} = 'c';
     }
     else {
-        die "bad suit $suit";
+        die "bad suit $orig_suit";
     }
-
-    bless $self, $class;
-    return $self;
 }
 
 sub rank {
@@ -44,8 +74,11 @@ sub rank {
 sub rank_char {
     my ($self) = @_;
     my $rank = $self->rank();
-    if (($rank >= 2) and ($rank <= 10)) {
+    if (($rank >= 2) and ($rank <= 9)) {
         return $rank;
+    }
+    if ($rank == 10) {
+        return 'T';
     }
     if ($rank == 11) {
         return 'J';

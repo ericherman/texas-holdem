@@ -4,7 +4,7 @@ use Data::Dumper;
 
 my $two_of_clubs1  = Card->new( 2, 'c' );
 my $ace_of_hearts  = Card->new( 1, 'hearts' );
-my $jack_of_hearts = Card->new( 11, 'h' );
+my $jack_of_hearts = Card->new( 'j', 'h' );
 my $ace_of_spades  = Card->new( 1, 's' );
 my $two_of_clubs2  = Card->new( 2, 'Club');
 
