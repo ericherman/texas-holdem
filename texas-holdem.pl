@@ -18,9 +18,7 @@ sub display_cards {
             }
         }
         $i++;
-        my $suit = $card->suit_char();
-        my $rank_char = $card->rank_char();
-        $str = sprintf("%s%2s%1s", $str, $rank_char, $suit);
+        $str = sprintf("%s%s", $str, $card->two_char());
     }
     return $str;
 }
@@ -47,12 +45,12 @@ foreach my $suit (qw{ s h c d }) { # spades hearts clubs diamonds }
     }
 }
 
-# print "initializing deck:\n";
-# print display_cards(@deck), "\n";
-# print "\n";
-# shuffle(\@deck);
-# print "shuffled deck:\n";
-# print display_cards(@deck), "\n";
+#print "initializing deck:\n";
+#print display_cards(@deck), "\n";
+#print "\n";
+shuffle(\@deck);
+#print "shuffled deck:\n";
+#print display_cards(@deck), "\n";
 
 my $players = 5;
 

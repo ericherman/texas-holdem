@@ -118,8 +118,16 @@ sub suit {
    die "bad suit '$suit_char'";
 }
 
+sub two_char {
+    my $self = shift;
+    return $self->rank_char() . $self->suit_char();
+}
+
 sub compare_to {
     my ($self, $other) = @_;
+    if (not defined $other) {
+        die $self->two_char() . '->compare_to(undef)';
+    }
     if ($self->rank() < $other->rank()) {
         return -1;
     }
