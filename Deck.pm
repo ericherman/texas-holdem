@@ -17,6 +17,7 @@ sub new {
         }
     }
     $self->{_cards} = \@deck;
+    $self->{_top} = 0;
 
     return $self;
 }
@@ -32,6 +33,11 @@ sub shuffle {
         @$deck[$i] = $card_b;
         @$deck[$swap] = $card_a;
     }
+}
+
+sub deal_card {
+    my ($self) = @_;
+    return $self->{_cards}->[$self->{_top}++];
 }
 
 sub display_cards {

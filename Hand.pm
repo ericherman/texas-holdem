@@ -7,10 +7,11 @@ use Card;
 
 sub new {
     my $class = shift;
-    my ($unsorted) = @_;
-    my @cards = sort { $b->compare_to($a) } @$unsorted;
-    my $self = { _cards => \@cards };
+    my $self = { _cards => [] };
     bless $self, $class;
+    foreach my $card (@_) {
+        $self->add_card($card);
+    }
     return $self;
 }
 
@@ -29,13 +30,21 @@ sub add_cards {
 
 sub cards {
     my ($self) = @_;
-    return $self->{_cards};
+    my $cards = $self->{_cards};
+    return wantarray ? @{$cards} : $cards;
+}
+
+sub sorted_cards {
+    my ($self) = @_;
+    my @cards = $self->cards();
+    my @sorted = sort { $b->compare_to($a) } @cards;
+    return wantarray ? @sorted : \@sorted;
 }
 
 sub num_cards {
     my ($self) = @_;
-    my $cards = $self->cards();
-    return scalar @$cards;
+    my @cards = $self->cards();
+    return scalar @cards;
 }
 
 sub _straight {
@@ -43,7 +52,7 @@ sub _straight {
     if ($self->num_cards() < 5) {
         return undef;
     }
-    my $cards = $self->cards();
+    my $cards = $self->sorted_cards();
     my $end = $self->num_cards() - 5 + 1;
 
     for (my $start= 0; $start < $end; $start++) {
@@ -73,8 +82,12 @@ sub _flush {
     if ($self->num_cards() < 5) {
         return undef;
     }
-    my @cards = sort { $a->suit_char() cmp $b->suit_char() }
-             @{$self->cards()};
+    my @unsorted = $self->cards();
+    my @cards = reverse sort {
+                        ($a->suit_char() cmp $b->suit_char())
+                     or ($a->rank()      <=> $b->rank())
+                } @unsorted;
+
     my $end = $self->num_cards() - 5 + 1;
 
     for (my $start= 0; $start < $end; $start++) {
@@ -104,7 +117,7 @@ sub _straight_flush {
     if ($self->num_cards() < 5) {
         return undef;
     }
-    my $cards = $self->cards();
+    my $cards = $self->sorted_cards();
     my $end = $self->num_cards() - 5 + 1;
 
     # straight flush
@@ -137,7 +150,7 @@ sub _straight_flush {
 sub _n_of_a_kind {
     my ($self, $n) = @_;
 
-    my $cards = $self->cards();
+    my $cards = $self->sorted_cards();
     my $end = $self->num_cards() - $n;
 
     for (my $start= 0; $start < $end; $start++) {
@@ -204,8 +217,10 @@ sub best_hand {
 
 
     #high card
-    my $cards = $self->cards();
+    my $cards = $self->sorted_cards();
+    my $num_cards = $self->num_cards();
     my @hand;
+    my $end = $num_cards < 5 ? $num_cards : 5;
     for (my $i = 0; $i < 5; $i++) {
         push @hand, $cards->[$i];
     }

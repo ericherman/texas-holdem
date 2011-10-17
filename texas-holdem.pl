@@ -10,46 +10,72 @@ sub display_cards {
     return join(' ', map { $_->two_char() } @_);
 }
 
-my $cards = Deck->new();
+my $deck = Deck->new();
 
 #print "initializing deck:\n";
-#print $cards->display_cards(), "\n";
+#print $deck->display_cards(), "\n";
 #print "\n";
-$cards->shuffle();
+$deck->shuffle();
 #print "shuffled deck:\n";
-#print $cards->display_cards(), "\n";
+#print $deck->display_cards(), "\n";
 #print "\n";
 
-my @deck = @{ $cards->{_cards} };
+my $num_players = 5;
 
-my $players = 5;
+my @hands;
+for (my $i = 0; $i < $num_players; $i++) {
+    push @hands, Hand->new();
+}
 
-my @house_hand;
-# push @house_hand, $deck[((2 * $players) + 0)]; # burn
-push @house_hand, $deck[((2 * $players) + 1)]; # flop
-push @house_hand, $deck[((2 * $players) + 2)]; # flop
-push @house_hand, $deck[((2 * $players) + 3)]; # flop
-# push @house_hand, $deck[((2 * $players) + 4)]; # burn
-push @house_hand, $deck[((2 * $players) + 5)]; # turn
-# push @house_hand, $deck[((2 * $players) + 6)]; # burn
-push @house_hand, $deck[((2 * $players) + 7)]; # river
+for my $i (1..2) {
+    foreach my $hand (@hands) {
+        $hand->add_card($deck->deal_card());
+    }
+}
+
+my $house_hand = Hand->new();
+my @table_cards;
+my $burn = $deck->deal_card();
+
+for my $i (1..3) { #flop
+   my $card = $deck->deal_card();
+   push @table_cards, $card;
+   foreach my $hand ($house_hand, @hands) {
+       $hand->add_card($card);
+   }
+}
+
+$burn = $deck->deal_card();
+
+my $turn = $deck->deal_card();
+push @table_cards, $turn;
+foreach my $hand ($house_hand, @hands) {
+    $hand->add_card($turn);
+}
+
+$burn = $deck->deal_card();
+
+my $river = $deck->deal_card();
+push @table_cards, $river;
+foreach my $hand ($house_hand, @hands) {
+    $hand->add_card($river);
+}
+
 
 print "on the table:\n";
-print display_cards(@house_hand), "\n";
-my $best_hand = Hand->new(\@house_hand)->best_hand();
+print display_cards(@table_cards), "\n";
+my $best_hand = $house_hand->best_hand();
 print "    ", $best_hand->{name}, ":\n";
 my @hand_cards = @{ $best_hand->{cards} };
 print "    [ ", display_cards(@hand_cards), " ]\n";
 
-for (my $i = 0; $i < $players; $i++) {
+my $i = 0;
+foreach my $hand (@hands) {
+    $i++;
     print "\n";
-    my @hand;
-    push @hand, $deck[$i];
-    push @hand, $deck[$i + $players];
-    push @hand, @house_hand;
     print "player $i:\n";
-    print display_cards(@hand), "\n";
-    $best_hand = Hand->new(\@hand)->best_hand();
+    print display_cards($hand->cards()), "\n";
+    $best_hand = $hand->best_hand();
     print "    ", $best_hand->{name}, ":\n";
     @hand_cards = @{ $best_hand->{cards} };
     print "    [ ", display_cards(@hand_cards), " ]\n";

@@ -15,7 +15,7 @@ my $ace_of_hearts  = Card->new( 1, 'h' );
 my $four_of_hearts = Card->new( 4, 'h');
 
 my @cards = ( $two_of_hearts, $ace_of_spades );
-my $hand = Hand->new(\@cards);
+my $hand = Hand->new(@cards);
 my $best = $hand->best_hand();
 my $data = Dumper({ hand => $hand, best => $best, });
 if ($best->{name} ne 'high card') {
