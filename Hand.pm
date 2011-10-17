@@ -14,6 +14,19 @@ sub new {
     return $self;
 }
 
+sub add_card {
+    my ($self, $card) = @_;
+    push @{ $self->{_cards} }, $card;
+}
+
+sub add_cards {
+    my $self = shift;
+    my @cards = @_;
+    foreach my $card (@cards) {
+        $self->add_card($card);
+    }
+}
+
 sub cards {
     my ($self) = @_;
     return $self->{_cards};
@@ -27,6 +40,9 @@ sub num_cards {
 
 sub _straight {
     my ($self) = @_;
+    if ($self->num_cards() < 5) {
+        return undef;
+    }
     my $cards = $self->cards();
     my $end = $self->num_cards() - 5 + 1;
 
@@ -54,6 +70,9 @@ sub _straight {
 
 sub _flush {
     my ($self) = @_;
+    if ($self->num_cards() < 5) {
+        return undef;
+    }
     my @cards = sort { $a->suit_char() cmp $b->suit_char() }
              @{$self->cards()};
     my $end = $self->num_cards() - 5 + 1;
@@ -82,6 +101,9 @@ sub _flush {
 
 sub _straight_flush {
     my ($self) = @_;
+    if ($self->num_cards() < 5) {
+        return undef;
+    }
     my $cards = $self->cards();
     my $end = $self->num_cards() - 5 + 1;
 
@@ -136,7 +158,7 @@ sub _n_of_a_kind {
                         name  => $n . ' of a kind',
                         cards => \@hand,
                     };
-                    if (scalar @hand == 5) {
+                    if ((scalar @hand == 5) or ($i == $self->num_cards()-1)) {
                         return $best;
                     }
                 }
