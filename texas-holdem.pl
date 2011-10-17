@@ -3,54 +3,24 @@ use strict;
 use warnings;
 
 use Card;
+use Deck;
 use Hand;
 
 sub display_cards {
-    my @cards = @_;
-    my $i = 0;
-    my $str = '';
-    foreach my $card (@cards) {
-        if ($i > 0) {
-            if (($i % 7) == 0) {
-                $str .= "\n";
-            } else {
-                $str .= " ";
-            }
-        }
-        $i++;
-        $str = sprintf("%s%s", $str, $card->two_char());
-    }
-    return $str;
+    return join(' ', map { $_->two_char() } @_);
 }
 
-sub shuffle {
-    my ($deck) = @_;
-    my $num_cards = scalar @$deck;
-    for (my $i= 0; $i < $num_cards; $i++) {
-        my $swap = int(rand($num_cards - $i)) + $i;
-        my $card_a = @$deck[$i];
-        my $card_b = @$deck[$swap];
-        @$deck[$i] = $card_b;
-        @$deck[$swap] = $card_a;
-    }
-}
-
-
-my @deck;
-
-foreach my $suit (qw{ s h c d }) { # spades hearts clubs diamonds }
-    foreach my $rank (2..14) {
-        my $card = Card->new( $rank, $suit );
-        push @deck, $card;
-    }
-}
+my $cards = Deck->new();
 
 #print "initializing deck:\n";
-#print display_cards(@deck), "\n";
+#print $cards->display_cards(), "\n";
 #print "\n";
-shuffle(\@deck);
+$cards->shuffle();
 #print "shuffled deck:\n";
-#print display_cards(@deck), "\n";
+#print $cards->display_cards(), "\n";
+#print "\n";
+
+my @deck = @{ $cards->{_cards} };
 
 my $players = 5;
 
