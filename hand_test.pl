@@ -22,17 +22,18 @@ my $nine_of_clubs  = Card->new( 9, 'c' );
 sub expect_name {
     my $hand_name = shift;
     my @cards     = @_;
+    my $from      = join ", ", map { $_->two_char() } @cards;
     my $hand      = Hand->new(@cards);
     my $best      = $hand->best_hand();
-    if ( $best->{name} ne $hand_name ) {
-        my $data = Dumper( { hand => $hand, best => $best, } );
-        die $data . ' not ' . $hand_name;
-    }
-
-    if (0) {
+    my $fail      = ($best->{name} ne $hand_name);
+    if (0 or $fail) {
         my $cards = join ", ",
           map { ($_) ? $_->two_char() : () } @{ $best->{cards} };
-        print "Got: $cards ($hand_name)\n";
+        print "Got: $cards (" . $best->{name} . ")\n";
+    }
+    if ( $fail ) {
+        my $data = Dumper( { from => $from, best => $best } );
+        die $data . " expected $hand_name \n";
     }
 }
 
@@ -62,3 +63,9 @@ my @cards = (
     $six_of_hearts, $ace_of_hearts, $nine_of_spades
 );
 expect_name( 'full house', @cards );
+
+my @cards = (
+    $two_of_hearts, $ace_of_spades, $nine_of_clubs, $four_of_hearts,
+    $six_of_hearts, $ace_of_hearts, $nine_of_spades
+);
+expect_name( 'two pair', @cards );
