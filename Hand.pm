@@ -70,6 +70,7 @@ sub _straight {
             my @hand = ( $ca, $cb, $cc, $cd, $ce );
             my $best = {
                 name  => 'straight',
+                rank  => [ 20, $hand[0]->rank() ],
                 cards => \@hand,
             };
             return $best;
@@ -106,8 +107,10 @@ sub _flush {
             my @hand = ( $ca, $cb, $cc, $cd, $ce );
             my $best = {
                 name  => 'flush',
+                rank  => [32],
                 cards => \@hand,
             };
+            push @{ $best->{rank} }, map { $_->rank() } @hand;
             return $best;
         }
     }
@@ -146,12 +149,27 @@ sub _straight_flush {
             my @hand = ( $ca, $cb, $cc, $cd, $ce );
             my $best = {
                 name  => 'straight flush',
+                rank  => [ 3216, $hand[0]->rank() ],
                 cards => \@hand,
             };
             return $best;
         }
     }
     return undef;
+}
+
+sub __rank_for_n {
+    my ($n) = @_;
+    if ( $n == 4 ) {
+        return 594;
+    }
+    if ( $n == 3 ) {
+        return 19;
+    }
+    if ( $n == 2 ) {
+        return 1;
+    }
+    die "no rank for $n";
 }
 
 sub _n_of_a_kind {
@@ -177,11 +195,15 @@ sub _n_of_a_kind {
                     push @hand, $card;
                     my $best = {
                         name  => $n . ' of a kind',
+                        rank  => [ __rank_for_n($n), $hand[0]->rank() ],
                         cards => \@hand,
                     };
                     if (   ( scalar @hand == 5 )
                         or ( $i == $num_cards - 1 ) )
                     {
+                        if ( defined $hand[$n] ) {
+                            push @{ $best->{rank} }, $hand[$n]->rank();
+                        }
                         return $best;
                     }
                 }
@@ -223,6 +245,7 @@ sub _full_house {
     push @hand, @{ $best->{cards} }[ 0 .. 1 ];
     $best = {
         name  => 'full house',
+        rank  => [ 37, $hand[0]->rank(), $hand[3]->rank() ],
         cards => \@hand,
     };
     return $best;
@@ -256,10 +279,13 @@ sub _two_pair {
     if ( not defined $best ) {
         return undef;
     }
-    my $end = ( $self->num_cards() == 4 ) ? 1 : 2;
+    my $have_4 = ( $self->num_cards() == 4 );
+    my $end = ($have_4) ? 1 : 2;
     push @hand, @{ $best->{cards} }[ 0 .. $end ];
+    my $high = ($have_4) ? 0 : $hand[4]->rank();
     $best = {
         name  => 'two pair',
+        rank  => [ 3, $hand[0]->rank(), $hand[2]->rank(), $high ],
         cards => \@hand,
     };
     return $best;
@@ -310,6 +336,7 @@ sub best_hand {
     }
     $best = {
         name  => 'high card',
+        rank  => [ 0, $hand[0]->rank() ],
         cards => \@hand,
     };
     return $best;

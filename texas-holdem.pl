@@ -65,9 +65,13 @@ foreach my $hand ( $house_hand, @hands ) {
 print "on the table:\n";
 print display_cards(@table_cards), "\n";
 my $best_hand = $house_hand->best_hand();
-print "    ", $best_hand->{name}, ":\n";
+print "    ", $best_hand->{name}, " [ ", join( ', ', @{ $best_hand->{rank} } ),
+  " ]:\n";
 my @hand_cards = @{ $best_hand->{cards} };
 print "    [ ", display_cards(@hand_cards), " ]\n";
+
+my $best_rank = $best_hand->{rank};
+my $tie       = 0;
 
 my $i = 0;
 foreach my $hand (@hands) {
@@ -76,7 +80,9 @@ foreach my $hand (@hands) {
     print "player $i:\n";
     print display_cards( $hand->cards() ), "\n";
     $best_hand = $hand->best_hand();
-    print "    ", $best_hand->{name}, ":\n";
+    print "    ", $best_hand->{name}, " [ ",
+      join( ', ', @{ $best_hand->{rank} } ), " ]:\n";
     @hand_cards = @{ $best_hand->{cards} };
     print "    [ ", display_cards(@hand_cards), " ]\n";
 }
+
