@@ -72,6 +72,7 @@ print "    [ ", display_cards(@hand_cards), " ]\n";
 
 my $best_rank = $best_hand->{rank};
 my $tie       = 0;
+my @winner    = ('the table');
 
 my $i = 0;
 foreach my $hand (@hands) {
@@ -79,10 +80,24 @@ foreach my $hand (@hands) {
     print "\n";
     print "player $i:\n";
     print display_cards( $hand->cards() ), "\n";
-    $best_hand = $hand->best_hand();
-    print "    ", $best_hand->{name}, " [ ",
-      join( ', ', @{ $best_hand->{rank} } ), " ]:\n";
-    @hand_cards = @{ $best_hand->{cards} };
-    print "    [ ", display_cards(@hand_cards), " ]\n";
+    my $player_hand = $hand->best_hand();
+    print "    ", $player_hand->{name}, " [ ",
+      join( ', ', @{ $player_hand->{rank} } ), " ]:\n";
+    my @player_cards = @{ $player_hand->{cards} };
+    @player_cards = @{ $player_hand->{cards} };
+    print "    [ ", display_cards(@player_cards), " ]\n";
+    my $compare = Hand->compare_ranks( $player_hand->{rank}, $best_rank );
+    if ( $compare > 0 ) {
+        $best_rank = $player_hand->{rank};
+        $tie       = 0;
+        @winner    = ("player $i");
+    }
+    elsif ( $compare == 0 ) {
+        $tie = 1;
+        push @winner, "player $i";
+    }
 }
 
+print "\n";
+my $msg = ($tie) ? "The winners are: " : "The winner is: ";
+print $msg, join( ', ', @winner ), "\n";

@@ -342,4 +342,18 @@ sub best_hand {
     return $best;
 }
 
+sub compare_ranks {
+    my ( $class, $r1, $r2 ) = @_;
+    my $ranks = scalar @{$r1};
+    for ( my $i = 0 ; $i < $ranks ; $i++ ) {
+        if ( $r1->[$i] > $r2->[$i] ) {
+            return 1;
+        }
+        if ( $r1->[$i] < $r2->[$i] ) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
 1;
