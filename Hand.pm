@@ -155,22 +155,23 @@ sub _straight_flush {
 }
 
 sub _n_of_a_kind {
-    my ( $self, $n ) = @_;
+    my ( $self, $n, $cards ) = @_;
 
-    my $cards = $self->sorted_cards();
-    my $end   = $self->num_cards() - $n;
+    $cards ||= $self->sorted_cards();
+    my $num_cards = scalar @$cards;
+    my $end       = $num_cards - $n;
 
     for ( my $start = 0 ; $start < $end ; $start++ ) {
         my @hand;
         push @hand, $cards->[$start];
-        for ( my $i = $start + 1 ; $i < $self->num_cards() ; $i++ ) {
+        for ( my $i = $start + 1 ; $i < $num_cards ; $i++ ) {
             my $ca = $cards->[$i];
             if ( $cards->[$start]->rank() == $ca->rank() ) {
                 push @hand, $ca;
             }
         }
         if ( ( scalar @hand ) >= $n ) {
-            for ( my $i = 0 ; $i < $self->num_cards() ; $i++ ) {
+            for ( my $i = 0 ; $i < $num_cards ; $i++ ) {
                 my $card = $cards->[$i];
                 if ( $card->rank() != $cards->[$start]->rank() ) {
                     push @hand, $card;
@@ -179,7 +180,7 @@ sub _n_of_a_kind {
                         cards => \@hand,
                     };
                     if (   ( scalar @hand == 5 )
-                        or ( $i == $self->num_cards() - 1 ) )
+                        or ( $i == $num_cards - 1 ) )
                     {
                         return $best;
                     }
@@ -188,6 +189,44 @@ sub _n_of_a_kind {
         }
     }
     return undef;
+}
+
+sub _full_house {
+    my ($self) = @_;
+    if ( $self->num_cards() < 5 ) {
+        return undef;
+    }
+    my $cards = $self->sorted_cards();
+    my $end   = $self->num_cards() - 5 + 1;
+    my $best  = $self->_n_of_a_kind( 3, $cards );
+    if ( not defined $best ) {
+        return undef;
+    }
+    my @hand = @{ $best->{cards} }[ 0 .. 2 ];
+
+    # print join(', ', map { $_->two_char() } @hand ), "\n";
+
+    my @remainder;
+    foreach my $card (@$cards) {
+        if (    ( $card->compare_to( $hand[0] ) )
+            and ( $card->compare_to( $hand[1] ) )
+            and ( $card->compare_to( $hand[2] ) ) )
+        {
+
+            # this card is not in the @hand
+            push @remainder, $card;
+        }
+    }
+    $best = $self->_n_of_a_kind( 2, \@remainder );
+    if ( not defined $best ) {
+        return undef;
+    }
+    push @hand, @{ $best->{cards} }[ 0 .. 1 ];
+    $best = {
+        name  => 'full house',
+        cards => \@hand,
+    };
+    return $best;
 }
 
 sub best_hand {
@@ -202,14 +241,15 @@ sub best_hand {
     return $best if $best;
 
     #full house
-    #TODO FULL HOUSE
-
-    #straight
-    $best = $self->_straight();
+    $best = $self->_full_house();
     return $best if $best;
 
     #flush
     $best = $self->_flush();
+    return $best if $best;
+
+    #straight
+    $best = $self->_straight();
     return $best if $best;
 
     #three of a kind
