@@ -16,12 +16,12 @@ sub new {
 }
 
 sub add_card {
-    my ($self, $card) = @_;
+    my ( $self, $card ) = @_;
     push @{ $self->{_cards} }, $card;
 }
 
 sub add_cards {
-    my $self = shift;
+    my $self  = shift;
     my @cards = @_;
     foreach my $card (@cards) {
         $self->add_card($card);
@@ -49,24 +49,25 @@ sub num_cards {
 
 sub _straight {
     my ($self) = @_;
-    if ($self->num_cards() < 5) {
+    if ( $self->num_cards() < 5 ) {
         return undef;
     }
     my $cards = $self->sorted_cards();
-    my $end = $self->num_cards() - 5 + 1;
+    my $end   = $self->num_cards() - 5 + 1;
 
-    for (my $start= 0; $start < $end; $start++) {
-        my $ca = $cards->[$start + 0];
-        my $cb = $cards->[$start + 1];
-        my $cc = $cards->[$start + 2];
-        my $cd = $cards->[$start + 3];
-        my $ce = $cards->[$start + 4];
+    for ( my $start = 0 ; $start < $end ; $start++ ) {
+        my $ca = $cards->[ $start + 0 ];
+        my $cb = $cards->[ $start + 1 ];
+        my $cc = $cards->[ $start + 2 ];
+        my $cd = $cards->[ $start + 3 ];
+        my $ce = $cards->[ $start + 4 ];
 
-        if  (($ca->rank() == $cb->rank() + 1)
-         and ($cb->rank() == $cc->rank() + 1)
-         and ($cc->rank() == $cd->rank() + 1)
-         and ($cd->rank() == $ce->rank() + 1)) {
-            my @hand = ($ca, $cb, $cc, $cd, $ce);
+        if (    ( $ca->rank() == $cb->rank() + 1 )
+            and ( $cb->rank() == $cc->rank() + 1 )
+            and ( $cc->rank() == $cd->rank() + 1 )
+            and ( $cd->rank() == $ce->rank() + 1 ) )
+        {
+            my @hand = ( $ca, $cb, $cc, $cd, $ce );
             my $best = {
                 name  => 'straight',
                 cards => \@hand,
@@ -79,29 +80,30 @@ sub _straight {
 
 sub _flush {
     my ($self) = @_;
-    if ($self->num_cards() < 5) {
+    if ( $self->num_cards() < 5 ) {
         return undef;
     }
     my @unsorted = $self->cards();
-    my @cards = reverse sort {
-                        ($a->suit_char() cmp $b->suit_char())
-                     or ($a->rank()      <=> $b->rank())
-                } @unsorted;
+    my @cards    = reverse sort {
+             ( $a->suit_char() cmp $b->suit_char() )
+          or ( $a->rank() <=> $b->rank() )
+    } @unsorted;
 
     my $end = $self->num_cards() - 5 + 1;
 
-    for (my $start= 0; $start < $end; $start++) {
-        my $ca = $cards[$start + 0];
-        my $cb = $cards[$start + 1];
-        my $cc = $cards[$start + 2];
-        my $cd = $cards[$start + 3];
-        my $ce = $cards[$start + 4];
+    for ( my $start = 0 ; $start < $end ; $start++ ) {
+        my $ca = $cards[ $start + 0 ];
+        my $cb = $cards[ $start + 1 ];
+        my $cc = $cards[ $start + 2 ];
+        my $cd = $cards[ $start + 3 ];
+        my $ce = $cards[ $start + 4 ];
 
-        if (($ca->suit() eq $cb->suit())
-         and ($ca->suit() eq $cc->suit())
-         and ($ca->suit() eq $cd->suit())
-         and ($ca->suit() eq $ce->suit())) {
-            my @hand = ($ca, $cb, $cc, $cd, $ce);
+        if (    ( $ca->suit() eq $cb->suit() )
+            and ( $ca->suit() eq $cc->suit() )
+            and ( $ca->suit() eq $cd->suit() )
+            and ( $ca->suit() eq $ce->suit() ) )
+        {
+            my @hand = ( $ca, $cb, $cc, $cd, $ce );
             my $best = {
                 name  => 'flush',
                 cards => \@hand,
@@ -114,29 +116,34 @@ sub _flush {
 
 sub _straight_flush {
     my ($self) = @_;
-    if ($self->num_cards() < 5) {
+    if ( $self->num_cards() < 5 ) {
         return undef;
     }
     my $cards = $self->sorted_cards();
-    my $end = $self->num_cards() - 5 + 1;
+    my $end   = $self->num_cards() - 5 + 1;
 
     # straight flush
-    for (my $start= 0; $start < $end; $start++) {
-        my $ca = $cards->[$start + 0];
-        my $cb = $cards->[$start + 1];
-        my $cc = $cards->[$start + 2];
-        my $cd = $cards->[$start + 3];
-        my $ce = $cards->[$start + 4];
+    for ( my $start = 0 ; $start < $end ; $start++ ) {
+        my $ca = $cards->[ $start + 0 ];
+        my $cb = $cards->[ $start + 1 ];
+        my $cc = $cards->[ $start + 2 ];
+        my $cd = $cards->[ $start + 3 ];
+        my $ce = $cards->[ $start + 4 ];
 
-        if ((($ca->suit() eq $cb->suit())
-         and ($ca->suit() eq $cc->suit())
-         and ($ca->suit() eq $cd->suit())
-         and ($ca->suit() eq $ce->suit())) and
-            (($ca->rank() == $cb->rank() + 1)
-         and ($cb->rank() == $cc->rank() + 1)
-         and ($cc->rank() == $cd->rank() + 1)
-         and ($cd->rank() == $ce->rank() + 1))) {
-            my @hand = ($ca, $cb, $cc, $cd, $ce);
+        if (
+            (
+                    ( $ca->suit() eq $cb->suit() )
+                and ( $ca->suit() eq $cc->suit() )
+                and ( $ca->suit() eq $cd->suit() )
+                and ( $ca->suit() eq $ce->suit() )
+            )
+            and (   ( $ca->rank() == $cb->rank() + 1 )
+                and ( $cb->rank() == $cc->rank() + 1 )
+                and ( $cc->rank() == $cd->rank() + 1 )
+                and ( $cd->rank() == $ce->rank() + 1 ) )
+          )
+        {
+            my @hand = ( $ca, $cb, $cc, $cd, $ce );
             my $best = {
                 name  => 'straight flush',
                 cards => \@hand,
@@ -148,30 +155,32 @@ sub _straight_flush {
 }
 
 sub _n_of_a_kind {
-    my ($self, $n) = @_;
+    my ( $self, $n ) = @_;
 
     my $cards = $self->sorted_cards();
-    my $end = $self->num_cards() - $n;
+    my $end   = $self->num_cards() - $n;
 
-    for (my $start= 0; $start < $end; $start++) {
+    for ( my $start = 0 ; $start < $end ; $start++ ) {
         my @hand;
         push @hand, $cards->[$start];
-        for (my $i = $start + 1; $i < $self->num_cards(); $i++) {
+        for ( my $i = $start + 1 ; $i < $self->num_cards() ; $i++ ) {
             my $ca = $cards->[$i];
-            if ($cards->[$start]->rank() == $ca->rank()) {
+            if ( $cards->[$start]->rank() == $ca->rank() ) {
                 push @hand, $ca;
             }
         }
-        if ((scalar @hand) >= $n) {
-            for (my $i = 0; $i < $self->num_cards(); $i++) {
+        if ( ( scalar @hand ) >= $n ) {
+            for ( my $i = 0 ; $i < $self->num_cards() ; $i++ ) {
                 my $card = $cards->[$i];
-                if ($card->rank() != $cards->[$start]->rank()) {
+                if ( $card->rank() != $cards->[$start]->rank() ) {
                     push @hand, $card;
                     my $best = {
                         name  => $n . ' of a kind',
                         cards => \@hand,
                     };
-                    if ((scalar @hand == 5) or ($i == $self->num_cards()-1)) {
+                    if (   ( scalar @hand == 5 )
+                        or ( $i == $self->num_cards() - 1 ) )
+                    {
                         return $best;
                     }
                 }
@@ -191,7 +200,6 @@ sub best_hand {
     #four of a kind
     $best = $self->_n_of_a_kind(4);
     return $best if $best;
-
 
     #full house
     #TODO FULL HOUSE
@@ -215,13 +223,12 @@ sub best_hand {
     $best = $self->_n_of_a_kind(2);
     return $best if $best;
 
-
     #high card
-    my $cards = $self->sorted_cards();
+    my $cards     = $self->sorted_cards();
     my $num_cards = $self->num_cards();
     my @hand;
     my $end = $num_cards < 5 ? $num_cards : 5;
-    for (my $i = 0; $i < 5; $i++) {
+    for ( my $i = 0 ; $i < 5 ; $i++ ) {
         push @hand, $cards->[$i];
     }
     $best = {
