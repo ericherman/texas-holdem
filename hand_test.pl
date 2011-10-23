@@ -25,13 +25,13 @@ sub expect_name {
     my $from      = join ", ", map { $_->two_char() } @cards;
     my $hand      = Hand->new(@cards);
     my $best      = $hand->best_hand();
-    my $fail      = ($best->{name} ne $hand_name);
-    if (0 or $fail) {
+    my $fail      = ( $best->{name} ne $hand_name );
+    if ( 0 or $fail ) {
         my $cards = join ", ",
           map { ($_) ? $_->two_char() : () } @{ $best->{cards} };
         print "Got: $cards (" . $best->{name} . ")\n";
     }
-    if ( $fail ) {
+    if ($fail) {
         my $data = Dumper( { from => $from, best => $best } );
         die $data . " expected $hand_name \n";
     }
