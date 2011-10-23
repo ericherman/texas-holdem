@@ -197,7 +197,6 @@ sub _full_house {
         return undef;
     }
     my $cards = $self->sorted_cards();
-    my $end   = $self->num_cards() - 5 + 1;
     my $best  = $self->_n_of_a_kind( 3, $cards );
     if ( not defined $best ) {
         return undef;
@@ -224,6 +223,43 @@ sub _full_house {
     push @hand, @{ $best->{cards} }[ 0 .. 1 ];
     $best = {
         name  => 'full house',
+        cards => \@hand,
+    };
+    return $best;
+}
+
+sub _two_pair {
+    my ($self) = @_;
+    if ( $self->num_cards() < 4 ) {
+        return undef;
+    }
+    my $cards = $self->sorted_cards();
+    my $best  = $self->_n_of_a_kind( 2, $cards );
+    if ( not defined $best ) {
+        return undef;
+    }
+    my @hand = @{ $best->{cards} }[ 0 .. 1 ];
+
+    # print join(', ', map { $_->two_char() } @hand ), "\n";
+
+    my @remainder;
+    foreach my $card (@$cards) {
+        if (    ( $card->compare_to( $hand[0] ) )
+            and ( $card->compare_to( $hand[1] ) ) )
+        {
+
+            # this card is not in the @hand
+            push @remainder, $card;
+        }
+    }
+    $best = $self->_n_of_a_kind( 2, \@remainder );
+    if ( not defined $best ) {
+        return undef;
+    }
+    my $end = ($self->num_cards() == 4) ? 1 : 2;
+    push @hand, @{ $best->{cards} }[ 0 .. $end ];
+    $best = {
+        name  => 'two pair',
         cards => \@hand,
     };
     return $best;
@@ -257,7 +293,8 @@ sub best_hand {
     return $best if $best;
 
     #two pair
-    #TODO TWO PAIR
+    $best = $self->_two_pair();
+    return $best if $best;
 
     #pair
     $best = $self->_n_of_a_kind(2);
