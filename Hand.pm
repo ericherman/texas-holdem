@@ -179,7 +179,7 @@ sub _n_of_a_kind {
     my $num_cards = scalar @$cards;
     my $end       = $num_cards - $n;
 
-    for ( my $start = 0 ; $start < $end ; $start++ ) {
+    for ( my $start = 0 ; $start <= $end ; $start++ ) {
         my @hand;
         push @hand, $cards->[$start];
         for ( my $i = $start + 1 ; $i < $num_cards ; $i++ ) {
@@ -189,16 +189,16 @@ sub _n_of_a_kind {
             }
         }
         if ( ( scalar @hand ) >= $n ) {
+            my $best = {
+                name  => $n . ' of a kind',
+                rank  => [ __rank_for_n($n), $hand[0]->rank() ],
+                cards => \@hand,
+            };
             for ( my $i = 0 ; $i < $num_cards ; $i++ ) {
                 my $card = $cards->[$i];
                 if ( $card->rank() != $cards->[$start]->rank() ) {
-                    push @hand, $card;
-                    my $best = {
-                        name  => $n . ' of a kind',
-                        rank  => [ __rank_for_n($n), $hand[0]->rank() ],
-                        cards => \@hand,
-                    };
-                    if (   ( scalar @hand == 5 )
+                    push @{ $best->{cards} }, $card;
+                    if (   ( scalar @{ $best->{cards} } == 5 )
                         or ( $i == $num_cards - 1 ) )
                     {
                         if ( defined $hand[$n] ) {
@@ -208,6 +208,7 @@ sub _n_of_a_kind {
                     }
                 }
             }
+            return $best;
         }
     }
     return undef;

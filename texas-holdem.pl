@@ -87,6 +87,7 @@ foreach my $hand (@hands) {
     @player_cards = @{ $player_hand->{cards} };
     print "    [ ", display_cards(@player_cards), " ]\n";
     my $compare = Hand->compare_ranks( $player_hand->{rank}, $best_rank );
+
     if ( $compare > 0 ) {
         $best_rank = $player_hand->{rank};
         $tie       = 0;

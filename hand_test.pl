@@ -69,3 +69,24 @@ my @cards = (
     $six_of_hearts, $ace_of_hearts, $nine_of_spades
 );
 expect_name( 'two pair', @cards );
+
+@cards = (
+    Card->new( 3, 's' ),
+    Card->new( 3, 'h' ),
+    Card->new( 6, 's' ),
+    Card->new( 3, 'c' ),
+    Card->new( 9, 's' )
+);
+expect_name( '3 of a kind', @cards );
+
+@cards = ( $ace_of_hearts, $ace_of_spades );
+expect_name( '2 of a kind', @cards );
+
+@cards = (
+    Card->new( 3, 's' ),
+    Card->new( 3, 'h' ),
+    Card->new( 9, 's' ),
+    Card->new( 3, 'c' ),
+    Card->new( 9, 's' )
+);
+expect_name( 'full house', @cards );
