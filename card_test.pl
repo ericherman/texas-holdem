@@ -33,7 +33,7 @@ my $ace_low = 0;
 if ($ace_of_spades->rank($ace_low) != 14) {
     die "14 != " . $ace_of_spades->rank();
 }
-$ace_low = 0;
+$ace_low = 1;
 if ($ace_of_spades->rank($ace_low) != 1) {
     die "1 != " . $ace_of_spades->rank();
 }

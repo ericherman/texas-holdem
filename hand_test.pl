@@ -99,3 +99,14 @@ expect_name( 'full house', @cards );
     Card->new( 5, 's' ),
 );
 expect_name( 'straight', @cards );
+
+@cards = (
+    Card->new( 1, 'h' ),
+    Card->new( 1, 's' ),
+    Card->new( 2, 'h' ),
+    Card->new( 3, 'h' ),
+    Card->new( 4, 'h' ),
+    Card->new( 5, 'h' ),
+    Card->new( 5, 'c' ),
+);
+expect_name( 'straight flush', @cards );

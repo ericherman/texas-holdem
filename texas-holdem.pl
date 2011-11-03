@@ -78,7 +78,7 @@ foreach my $hand (@hands) {
     $i++;
     print "\n";
     print "player $i:\n";
-    print display_cards( $hand->cards() ), "\n";
+    print display_cards( +@{+$hand->cards()} ), "\n";
     my $player_hand = $hand->best_hand();
     print "    ", $player_hand->{name}, " [ ",
       join( ', ', @{ $player_hand->{rank} } ), " ]:\n";

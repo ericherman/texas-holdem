@@ -31,30 +31,41 @@ sub add_cards {
 sub cards {
     my ($self) = @_;
     my $cards = $self->{_cards};
-    return wantarray ? @{$cards} : $cards;
+    return $cards;
 }
 
 sub sorted_cards {
     my ( $self, $ace_low ) = @_;
-    my @cards = $self->cards();
-    my @sorted = sort { $b->compare_to( $a, $ace_low ) } @cards;
+    my $cards = $self->cards();
+    return __sort_cards($cards, $ace_low);
+}
+
+sub __sort_cards {
+    my ( $cards, $ace_low ) = @_;
+    my @sorted = sort { $b->compare_to( $a, $ace_low ) } @$cards;
     return wantarray ? @sorted : \@sorted;
 }
 
 sub num_cards {
     my ($self) = @_;
-    my @cards = $self->cards();
-    return scalar @cards;
+    my $cards = $self->cards();
+    return scalar @$cards;
 }
 
 sub _straight {
     my ($self) = @_;
-    if ( $self->num_cards() < 5 ) {
+    return __straight($self->cards());
+}
+
+sub __straight {
+    my ($cards) = @_;
+    my $num_cards = scalar @{$cards};
+    if ( $num_cards < 5 ) {
         return undef;
     }
     foreach my $ace_low ( 0 .. 1 ) {
-        my $cards = $self->sorted_cards($ace_low);
-        my $end   = $self->num_cards() - 5 + 1;
+        my $cards = __sort_cards($cards, $ace_low);
+        my $end   = $num_cards - 5 + 1;
 
         for ( my $start = 0 ; $start < $end ; $start++ ) {
             my $ca = $cards->[ $start + 0 ];
@@ -83,16 +94,21 @@ sub _straight {
 
 sub _flush {
     my ($self) = @_;
-    if ( $self->num_cards() < 5 ) {
+    return __flush($self->cards());
+}
+
+sub __flush {
+    my ($unsorted) = @_;
+    my $num_cards = scalar @$unsorted;
+    if ( $num_cards < 5 ) {
         return undef;
     }
-    my @unsorted = $self->cards();
     my @cards    = reverse sort {
              ( $a->suit_char() cmp $b->suit_char() )
           or ( $a->rank() <=> $b->rank() )
-    } @unsorted;
+    } @$unsorted;
 
-    my $end = $self->num_cards() - 5 + 1;
+    my $end = $num_cards - 5 + 1;
 
     for ( my $start = 0 ; $start < $end ; $start++ ) {
         my $ca = $cards[ $start + 0 ];
@@ -124,31 +140,17 @@ sub _straight_flush {
     if ( $self->num_cards() < 5 ) {
         return undef;
     }
-    my $cards = $self->sorted_cards();
+    foreach my $ace_low (0..1) {
+    my @cards = reverse sort {
+             ( $a->suit_char() cmp $b->suit_char() )
+          or ( $a->rank($ace_low) <=> $b->rank($ace_low) )
+    } @{ $self->cards() };
     my $end   = $self->num_cards() - 5 + 1;
 
     # straight flush
     for ( my $start = 0 ; $start < $end ; $start++ ) {
-        my $ca = $cards->[ $start + 0 ];
-        my $cb = $cards->[ $start + 1 ];
-        my $cc = $cards->[ $start + 2 ];
-        my $cd = $cards->[ $start + 3 ];
-        my $ce = $cards->[ $start + 4 ];
-
-        if (
-            (
-                    ( $ca->suit() eq $cb->suit() )
-                and ( $ca->suit() eq $cc->suit() )
-                and ( $ca->suit() eq $cd->suit() )
-                and ( $ca->suit() eq $ce->suit() )
-            )
-            and (   ( $ca->rank() == $cb->rank() + 1 )
-                and ( $cb->rank() == $cc->rank() + 1 )
-                and ( $cc->rank() == $cd->rank() + 1 )
-                and ( $cd->rank() == $ce->rank() + 1 ) )
-          )
-        {
-            my @hand = ( $ca, $cb, $cc, $cd, $ce );
+        my @hand = @cards[$start .. $start + 4];
+        if ( __flush(\@hand) and __straight(\@hand)) {
             my $best = {
                 name  => 'straight flush',
                 rank  => [ 3216, $hand[0]->rank() ],
@@ -156,6 +158,7 @@ sub _straight_flush {
             };
             return $best;
         }
+    }
     }
     return undef;
 }
