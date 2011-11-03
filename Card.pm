@@ -71,9 +71,9 @@ sub _set_suit {
 }
 
 sub rank {
-    my ($self, $ace_low) = @_;
+    my ( $self, $ace_low ) = @_;
     my $rank = $self->{_rank};
-    if ( ($ace_low) && ($rank == 14)) {
+    if ( ($ace_low) && ( $rank == 14 ) ) {
         return 1;
     }
     return $rank;

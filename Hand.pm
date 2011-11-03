@@ -37,7 +37,7 @@ sub cards {
 sub sorted_cards {
     my ( $self, $ace_low ) = @_;
     my $cards = $self->cards();
-    return __sort_cards($cards, $ace_low);
+    return __sort_cards( $cards, $ace_low );
 }
 
 sub __sort_cards {
@@ -54,7 +54,7 @@ sub num_cards {
 
 sub _straight {
     my ($self) = @_;
-    return __straight($self->cards());
+    return __straight( $self->cards() );
 }
 
 sub __straight {
@@ -64,8 +64,8 @@ sub __straight {
         return undef;
     }
     foreach my $ace_low ( 0 .. 1 ) {
-        my $cards = __sort_cards($cards, $ace_low);
-        my $end   = $num_cards - 5 + 1;
+        my $cards = __sort_cards( $cards, $ace_low );
+        my $end = $num_cards - 5 + 1;
 
         for ( my $start = 0 ; $start < $end ; $start++ ) {
             my $ca = $cards->[ $start + 0 ];
@@ -94,7 +94,7 @@ sub __straight {
 
 sub _flush {
     my ($self) = @_;
-    return __flush($self->cards());
+    return __flush( $self->cards() );
 }
 
 sub __flush {
@@ -103,7 +103,7 @@ sub __flush {
     if ( $num_cards < 5 ) {
         return undef;
     }
-    my @cards    = reverse sort {
+    my @cards = reverse sort {
              ( $a->suit_char() cmp $b->suit_char() )
           or ( $a->rank() <=> $b->rank() )
     } @$unsorted;
@@ -140,25 +140,25 @@ sub _straight_flush {
     if ( $self->num_cards() < 5 ) {
         return undef;
     }
-    foreach my $ace_low (0..1) {
-    my @cards = reverse sort {
-             ( $a->suit_char() cmp $b->suit_char() )
-          or ( $a->rank($ace_low) <=> $b->rank($ace_low) )
-    } @{ $self->cards() };
-    my $end   = $self->num_cards() - 5 + 1;
+    foreach my $ace_low ( 0 .. 1 ) {
+        my @cards = reverse sort {
+                 ( $a->suit_char() cmp $b->suit_char() )
+              or ( $a->rank($ace_low) <=> $b->rank($ace_low) )
+        } @{ $self->cards() };
+        my $end = $self->num_cards() - 5 + 1;
 
-    # straight flush
-    for ( my $start = 0 ; $start < $end ; $start++ ) {
-        my @hand = @cards[$start .. $start + 4];
-        if ( __flush(\@hand) and __straight(\@hand)) {
-            my $best = {
-                name  => 'straight flush',
-                rank  => [ 3216, $hand[0]->rank() ],
-                cards => \@hand,
-            };
-            return $best;
+        # straight flush
+        for ( my $start = 0 ; $start < $end ; $start++ ) {
+            my @hand = @cards[ $start .. $start + 4 ];
+            if ( __flush( \@hand ) and __straight( \@hand ) ) {
+                my $best = {
+                    name  => 'straight flush',
+                    rank  => [ 3216, $hand[0]->rank() ],
+                    cards => \@hand,
+                };
+                return $best;
+            }
         }
-    }
     }
     return undef;
 }
