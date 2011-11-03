@@ -71,8 +71,12 @@ sub _set_suit {
 }
 
 sub rank {
-    my ($self) = @_;
-    return $self->{_rank};
+    my ($self, $ace_low) = @_;
+    my $rank = $self->{_rank};
+    if ( ($ace_low) && ($rank == 14)) {
+        return 1;
+    }
+    return $rank;
 }
 
 sub rank_char {
@@ -128,14 +132,14 @@ sub two_char {
 }
 
 sub compare_to {
-    my ( $self, $other ) = @_;
+    my ( $self, $other, $ace_low ) = @_;
     if ( not defined $other ) {
         die $self->two_char() . '->compare_to(undef)';
     }
-    if ( $self->rank() < $other->rank() ) {
+    if ( $self->rank($ace_low) < $other->rank($ace_low) ) {
         return -1;
     }
-    if ( $self->rank() > $other->rank() ) {
+    if ( $self->rank($ace_low) > $other->rank($ace_low) ) {
         return 1;
     }
     if ( $self->suit_char() lt $other->suit_char() ) {

@@ -24,3 +24,16 @@ if (   ( $cards[0] ne $sorted[0] )
 {
     die $data;
 }
+
+if ($ace_of_spades->rank() != 14) {
+    die "14 != " . $ace_of_spades->rank();
+}
+
+my $ace_low = 0;
+if ($ace_of_spades->rank($ace_low) != 14) {
+    die "14 != " . $ace_of_spades->rank();
+}
+$ace_low = 0;
+if ($ace_of_spades->rank($ace_low) != 1) {
+    die "1 != " . $ace_of_spades->rank();
+}

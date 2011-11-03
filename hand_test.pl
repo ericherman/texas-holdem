@@ -90,3 +90,12 @@ expect_name( '2 of a kind', @cards );
     Card->new( 9, 's' )
 );
 expect_name( 'full house', @cards );
+
+@cards = (
+    Card->new( 1, 's' ),
+    Card->new( 2, 'h' ),
+    Card->new( 3, 'd' ),
+    Card->new( 4, 'c' ),
+    Card->new( 5, 's' ),
+);
+expect_name( 'straight', @cards );

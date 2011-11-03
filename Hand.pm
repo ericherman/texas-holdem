@@ -35,9 +35,9 @@ sub cards {
 }
 
 sub sorted_cards {
-    my ($self) = @_;
+    my ( $self, $ace_low ) = @_;
     my @cards = $self->cards();
-    my @sorted = sort { $b->compare_to($a) } @cards;
+    my @sorted = sort { $b->compare_to( $a, $ace_low ) } @cards;
     return wantarray ? @sorted : \@sorted;
 }
 
@@ -52,28 +52,30 @@ sub _straight {
     if ( $self->num_cards() < 5 ) {
         return undef;
     }
-    my $cards = $self->sorted_cards();
-    my $end   = $self->num_cards() - 5 + 1;
+    foreach my $ace_low ( 0 .. 1 ) {
+        my $cards = $self->sorted_cards($ace_low);
+        my $end   = $self->num_cards() - 5 + 1;
 
-    for ( my $start = 0 ; $start < $end ; $start++ ) {
-        my $ca = $cards->[ $start + 0 ];
-        my $cb = $cards->[ $start + 1 ];
-        my $cc = $cards->[ $start + 2 ];
-        my $cd = $cards->[ $start + 3 ];
-        my $ce = $cards->[ $start + 4 ];
+        for ( my $start = 0 ; $start < $end ; $start++ ) {
+            my $ca = $cards->[ $start + 0 ];
+            my $cb = $cards->[ $start + 1 ];
+            my $cc = $cards->[ $start + 2 ];
+            my $cd = $cards->[ $start + 3 ];
+            my $ce = $cards->[ $start + 4 ];
 
-        if (    ( $ca->rank() == $cb->rank() + 1 )
-            and ( $cb->rank() == $cc->rank() + 1 )
-            and ( $cc->rank() == $cd->rank() + 1 )
-            and ( $cd->rank() == $ce->rank() + 1 ) )
-        {
-            my @hand = ( $ca, $cb, $cc, $cd, $ce );
-            my $best = {
-                name  => 'straight',
-                rank  => [ 20, $hand[0]->rank() ],
-                cards => \@hand,
-            };
-            return $best;
+            if (    ( $ca->rank() == $cb->rank() + 1 )
+                and ( $cb->rank() == $cc->rank() + 1 )
+                and ( $cc->rank() == $cd->rank() + 1 )
+                and ( $cd->rank() == $ce->rank($ace_low) + 1 ) )
+            {
+                my @hand = ( $ca, $cb, $cc, $cd, $ce );
+                my $best = {
+                    name  => 'straight',
+                    rank  => [ 20, $hand[0]->rank() ],
+                    cards => \@hand,
+                };
+                return $best;
+            }
         }
     }
     return undef;
