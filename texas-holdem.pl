@@ -107,48 +107,7 @@ foreach my $hand ( $house_hand, @hands ) {
     $hand->add_card($river);
 }
 
-<<<<<<< HEAD
-print "on the table:\n";
-print display_cards(@table_cards), "\n";
-my $best_hand = $house_hand->best_hand();
-print "    ", $best_hand->{name}, " [ ", join( ', ', @{ $best_hand->{rank} } ),
-  " ]:\n";
-my @hand_cards = @{ $best_hand->{cards} };
-print "    [ ", display_cards(@hand_cards), " ]\n";
-
-my $tie    = 0;
-my @winner = ('the table');
-
-my $i = 0;
-foreach my $hand (@hands) {
-    $i++;
-    print "\n";
-    print "player $i:\n";
-    print display_cards( @{$hand->cards()}[0], @{$hand->cards()}[1] ), "\n";
-    my $player_hand = $hand->best_hand();
-    print "    ", $player_hand->{name}, " [ ",
-      join( ', ', @{ $player_hand->{rank} } ), " ]:\n";
-    my @player_cards = @{ $player_hand->{cards} };
-    @player_cards = @{ $player_hand->{cards} };
-    print "    [ ", display_cards(@player_cards), " ]\n";
-
-    my $best_rank   = $best_hand->{rank};
-    my $player_rank = $player_hand->{rank};
-    my $compare     = Hand->compare_ranks( $player_rank, $best_rank );
-
-    if ( $compare > 0 ) {
-        $best_hand = $player_hand;
-        $tie       = 0;
-        @winner    = ("player $i");
-    }
-    elsif ( $compare == 0 ) {
-        $tie = 1;
-        push @winner, "player $i";
-    }
-}
-=======
 my $best_hand = visualize_game( $house_hand, @hands );
->>>>>>> move game visualizaton into a function
 
 printf( "\twith a %s (odds over %s to 1 against)\n",
     $best_hand->{name}, $best_hand->{rank}->[0] );
