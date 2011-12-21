@@ -340,7 +340,7 @@ sub best_hand {
     for ( my $i = 0 ; $i < $end ; $i++ ) {
         push @hand, $cards->[$i];
     }
-    my $high = (scalar @hand) ? $hand[0]->rank() : 0;
+    my $high = ( scalar @hand ) ? $hand[0]->rank() : 0;
     $best = {
         name  => 'high card',
         rank  => [ 0, $high ],
