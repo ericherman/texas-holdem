@@ -337,12 +337,13 @@ sub best_hand {
     my $num_cards = $self->num_cards();
     my @hand;
     my $end = $num_cards < 5 ? $num_cards : 5;
-    for ( my $i = 0 ; $i < 5 ; $i++ ) {
+    for ( my $i = 0 ; $i < $end ; $i++ ) {
         push @hand, $cards->[$i];
     }
+    my $high = (scalar @hand) ? $hand[0]->rank() : 0;
     $best = {
         name  => 'high card',
-        rank  => [ 0, $hand[0]->rank() ],
+        rank  => [ 0, $high ],
         cards => \@hand,
     };
     return $best;
