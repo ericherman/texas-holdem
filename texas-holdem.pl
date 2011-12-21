@@ -72,6 +72,7 @@ $deck->shuffle();
 
 my $num_players = 5;
 
+my $house_hand = Hand->new();
 my @hands;
 for ( my $i = 0 ; $i < $num_players ; $i++ ) {
     push @hands, Hand->new();
@@ -83,8 +84,11 @@ for my $i ( 1 .. 2 ) {
     }
 }
 
-my $house_hand = Hand->new();
-my $burn       = $deck->deal_card();
+visualize_game( $house_hand, @hands );
+my $userinput = <STDIN>;
+chomp($userinput);
+
+my $burn = $deck->deal_card();
 
 for my $i ( 1 .. 3 ) {    #flop
     my $card = $deck->deal_card();
@@ -93,12 +97,20 @@ for my $i ( 1 .. 3 ) {    #flop
     }
 }
 
+visualize_game( $house_hand, @hands );
+$userinput = <STDIN>;
+chomp($userinput);
+
 $burn = $deck->deal_card();
 
 my $turn = $deck->deal_card();
 foreach my $hand ( $house_hand, @hands ) {
     $hand->add_card($turn);
 }
+
+visualize_game( $house_hand, @hands );
+$userinput = <STDIN>;
+chomp($userinput);
 
 $burn = $deck->deal_card();
 
