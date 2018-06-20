@@ -118,5 +118,5 @@ foreach my $hand ( $house_hand, @hands ) {
 
 my $best_hand = visualize_game( $house_hand, @hands );
 
-printf( "\twith a %s (odds over %s to 1 against)\n",
-    $best_hand->{name}, $best_hand->{rank}->[0] );
+# printf( "\twith a %s (odds over %s to 1 against)\n",
+#     $best_hand->{name}, $best_hand->{rank}->[0] );
