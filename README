@@ -1,3 +1,8 @@
+Running
+-------
+PERL5LIB=. ./texas-holdem.pl
+
+
 License
 -------
 GNU Lesser General Public License (LGPL), version 3 or (at your option) later.
