@@ -17,9 +17,7 @@ sub visualize_game {
     print "on the table:\n";
     print display_cards(@table_cards), "\n";
     my $best_hand = $house_hand->best_hand();
-    print "    ", $best_hand->{name}, " [ ",
-      join( ', ', @{ $best_hand->{rank} } ),
-      " ]:\n";
+    print "    ", $best_hand->{name}, "\n";
     my @hand_cards = @{ $best_hand->{cards} };
     print "    [ ", display_cards(@hand_cards), " ]\n";
 
@@ -34,8 +32,7 @@ sub visualize_game {
         print display_cards( @{ $hand->cards() }[0], @{ $hand->cards() }[1] ),
           "\n";
         my $player_hand = $hand->best_hand();
-        print "    ", $player_hand->{name}, " [ ",
-          join( ', ', @{ $player_hand->{rank} } ), " ]:\n";
+        print "    ", $player_hand->{name}, "\n";
         my @player_cards = @{ $player_hand->{cards} };
         print "    [ ", display_cards(@player_cards), " ]\n";
 
