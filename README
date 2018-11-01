@@ -6,4 +6,4 @@ PERL5LIB=. ./texas-holdem.pl
 License
 -------
 GNU Lesser General Public License (LGPL), version 3 or (at your option) later.
-See COPYING, gpl-3.0.txt for details.
+See COPYING, COPYING.LESSER for details.
